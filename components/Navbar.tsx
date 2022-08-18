@@ -1,8 +1,10 @@
 import Link from 'next/link' 
+import { useContext } from 'react'
+import { UserContext } from '../lib/context'
 
 export default function Page({ }) {
-	const user = null
-	const username = null
+
+	const { user, username } = useContext(UserContext)
 
 	return (
 		<nav className='navbar'>
@@ -20,19 +22,18 @@ export default function Page({ }) {
 							</Link>
 						</li>
 						<li>
-							<Link href={`/${username}`}>
-								<img src={user?.photoURL} />
-							</Link>
+							<Link href={`/${username}`} ><a>{username}</a></Link>
 						</li>
 					</>
 				)}
 
-				{username || (
+				{(!username ? 
 					<li>
 						<Link href='/enter'>
 							<button className='btn-blue'>Log in</button>
 						</Link>
 					</li>
+					:<></>
 				)}
 			</ul>
 		</nav>
