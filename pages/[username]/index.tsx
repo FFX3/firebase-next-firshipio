@@ -8,8 +8,6 @@ export async function getServerSideProps({ query }) {
 
 	const userDoc = await getUserWithUsername(username)
 
-	console.log(userDoc)
-
 	let user = null
 	let posts = null
 	if (userDoc) {
@@ -17,7 +15,7 @@ export async function getServerSideProps({ query }) {
 		const postQuery = firebaseQuery(
 			collection(userDoc.ref, 'posts'),
 			where('published', '==', true),
-			orderBy('created', 'desc'),
+			orderBy('createdAt', 'desc'),
 			limit(5)
 		)
 

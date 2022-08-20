@@ -66,8 +66,6 @@ function UsernameForm(){
 			if(username.length >= 3) {
 				const docRef = doc(firestore, `usernames/${username}`)
 				const snapShot = await getDoc(docRef)
-				console.log(snapShot)
-				console.log('Firestore read executed!')
 				setIsValid(!snapShot.exists())
 				setLoading(false)
 			}
