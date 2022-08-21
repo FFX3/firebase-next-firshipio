@@ -1,13 +1,14 @@
 import { collection, getDoc, doc, updateDoc, serverTimestamp, getDocs } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useDocumentDataOnce, useDocumentData } from "react-firebase-hooks/firestore";
+import { useDocumentDataOnce } from "react-firebase-hooks/firestore";
 import { useForm } from "react-hook-form";
 import AuthCheck from "../../components/AuthCheck";
 import { auth, firestore } from "../../lib/firebase";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import { toast } from "react-toastify";
 import Link from "next/link";
+import ImageUploader from '../../components/ImageUploader'
 
 export default function AdminPostEdit({ }) {
 	return (
@@ -25,7 +26,7 @@ function PostManager() {
 	
 	const postRef = doc(firestore, 'users', auth.currentUser.uid, 'posts', slug)
 
-	const [post] = useDocumentData(postRef)
+	const [post] = useDocumentDataOnce(postRef)
 	
 	return (
 		<main>
@@ -78,6 +79,7 @@ function PostForm({ defaultValues, postRef, preview }){
 			)}
 
 			<div style={{ display: preview ? 'hidden' : 'block'}}>
+				<ImageUploader />
 				<textarea className="card" style={{width: '100%'}} {...register('content', {
 					maxLength: { value: 20000, message: 'content is too long' },
 					minLength: { value: 10, message: 'content is too short' },
