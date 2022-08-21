@@ -26,8 +26,6 @@ function PostManager() {
 	const postRef = doc(firestore, 'users', auth.currentUser.uid, 'posts', slug)
 
 	const [post] = useDocumentData(postRef)
-
-	console.log(post)
 	
 	return (
 		<main>
@@ -42,9 +40,9 @@ function PostManager() {
 						
 						<aside>
 							<h3>Tools</h3>
-							<button onClick={() => setPreview(!preview)}>{preview ? 'Edit' : 'Preview'}</button>
+							<button style={{width:"100%"}} onClick={() => setPreview(!preview)}>{preview ? 'Edit' : 'Preview'}</button>
 							<Link href={`/${post.username}/${post.slug}`}>
-								<button className="btn-blue">Live view</button>
+								<button style={{width:"100%"}} className="btn-blue">Live view</button>
 							</Link>
 						</aside>
 					</div>
@@ -55,7 +53,9 @@ function PostManager() {
 }
 
 function PostForm({ defaultValues, postRef, preview }){ 
-	const { register, handleSubmit, reset, watch } = useForm({ defaultValues, mode: 'onChange'})
+	const { register, handleSubmit, reset, watch, formState } = useForm({ defaultValues, mode: 'onChange'})
+
+	const { isValid, isDirty, errors } = formState
 
 	const updatePost = async ({ content, published }) => {
 		await updateDoc(postRef, {
@@ -78,14 +78,20 @@ function PostForm({ defaultValues, postRef, preview }){
 			)}
 
 			<div style={{ display: preview ? 'hidden' : 'block'}}>
-				<textarea className="card" style={{width: '100%'}} {...register('content')} ></textarea>
+				<textarea className="card" style={{width: '100%'}} {...register('content', {
+					maxLength: { value: 20000, message: 'content is too long' },
+					minLength: { value: 10, message: 'content is too short' },
+					required: { value: true, message: 'content is required' }
+				})} ></textarea>
+
+				{ typeof errors.content?.message === 'string' && <p className="text-danger">{ errors.content.message }</p> }
 
 				<fieldset>
 					<input style={{display: 'inline-block'}} type="checkbox" {...register('published')} />
 					<label style={{display: 'inline-block'}}>Published</label>
 				</fieldset>
 
-				<button type="submit" className="btn-green">
+				<button type="submit" className="btn-green" style={{width:"100%"}}  disabled={!isDirty || !isValid} >
 					Save Changes
 				</button>
 			</div>
